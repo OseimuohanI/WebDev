@@ -4,7 +4,6 @@ $conn = mysqli_connect("127.0.0.1:3305", "root", "", "feedback_portal");
 if (!$conn) {
     die("Connection failed: " . mysqli_connect_error());
 }
-
 if (isset($_POST['submit'])) {
     $name = $_POST['name'];
     $email = $_POST['email'];
