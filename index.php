@@ -1,13 +1,10 @@
 <?php
-// connect to database
 $conn = mysqli_connect("127.0.0.1:3305", "root", "", "feedback_portal");
 
-// check connection
 if (!$conn) {
     die("Connection failed: " . mysqli_connect_error());
 }
 
-// SAVE FEEDBACK
 if (isset($_POST['submit'])) {
     $name = $_POST['name'];
     $email = $_POST['email'];
@@ -18,8 +15,6 @@ if (isset($_POST['submit'])) {
             VALUES ('$name', '$email', '$rating', '$comment')";
     mysqli_query($conn, $sql);
 }
-
-// FILTER FEEDBACK (GET)
 $filter = "";
 if (isset($_GET['rating']) && $_GET['rating'] != "") {
     $r = $_GET['rating'];
@@ -29,12 +24,9 @@ if (isset($_GET['keyword']) && $_GET['keyword'] != "") {
     $k = $_GET['keyword'];
     $filter = "WHERE comment LIKE '%$k%' OR name LIKE '%$k%'";
 }
-
-// FETCH ALL FEEDBACKS
 $sql = "SELECT * FROM feedbacks $filter ORDER BY id DESC";
 $result = mysqli_query($conn, $sql);
 
-// CALCULATE AVERAGE RATING 
 $avg_sql = "SELECT AVG(rating) AS avg FROM feedbacks";
 if ($filter != "") {
     $avg_sql = "SELECT AVG(rating) AS avg FROM feedbacks $filter";
@@ -43,17 +35,13 @@ $avg_result = mysqli_query($conn, $avg_sql);
 $avg_row = mysqli_fetch_assoc($avg_result);
 $average = round($avg_row['avg'], 2);
 ?>
-
 <!DOCTYPE html>
 <html>
 <head>
     <title>Feedback Portal</title>
 </head>
 <body>
-
 <h1>Feedback Collection Portal</h1>
-
-<!-- POST Form -->
 <form method="POST" action="">
     <p>Name: <input type="text" name="name" required></p>
     <p>Email: <input type="email" name="email" required></p>
@@ -61,10 +49,7 @@ $average = round($avg_row['avg'], 2);
     <p>Comment:<br><textarea name="comment" rows="3" cols="40"></textarea></p>
     <p><input type="submit" name="submit" value="Submit Feedback"></p>
 </form>
-
 <hr>
-
-<!-- Filter Form -->
 <form method="GET" action="">
     <p>Filter by rating:
         <select name="rating">
@@ -78,20 +63,14 @@ $average = round($avg_row['avg'], 2);
         <input type="submit" value="Filter">
     </p>
 </form>
-
 <form method="GET" action="">
     <p>Search keyword:
         <input type="text" name="keyword">
         <input type="submit" value="Search">
     </p>
 </form>
-
 <hr>
-
-<!-- Average Rating -->
 <h3>Average Rating: <?php echo $average ? $average : 'No feedback yet'; ?></h3>
-
-<!-- Display Feedbacks -->
 <h2>All Feedback</h2>
 <?php
 if (mysqli_num_rows($result) > 0) {
@@ -104,6 +83,5 @@ if (mysqli_num_rows($result) > 0) {
     echo "<p>No feedback found.</p>";
 }
 ?>
-
 </body>
 </html>
